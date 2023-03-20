@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>911443768062-d7q6ai4cvums99a8l3i746kug727a1ho.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.911443768062-d7q6ai4cvums99a8l3i746kug727a1ho</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB3n1vwSba2SVUJitA0nQSCFLYHk_HqJ_Q</string>
+	<key>GCM_SENDER_ID</key>
+	<string>911443768062</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.tapmetoremember</string>
+	<key>PROJECT_ID</key>
+	<string>tapme-a598a</string>
+	<key>STORAGE_BUCKET</key>
+	<string>tapme-a598a.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:911443768062:ios:8b3ceee14764c76acc6baf</string>
+</dict>
+</plist>

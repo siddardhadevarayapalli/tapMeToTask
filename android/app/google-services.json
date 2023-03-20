@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "911443768062",
+    "project_id": "tapme-a598a",
+    "storage_bucket": "tapme-a598a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911443768062:android:722482b06797711dcc6baf",
+        "android_client_info": {
+          "package_name": "com.example.tapmetoremember"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "911443768062-k0a8sng0kddpsi56jaim74esehnh7g46.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWDlOeUuXU317DSj47TAfPO3ZCrbYg2_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "911443768062-k0a8sng0kddpsi56jaim74esehnh7g46.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
