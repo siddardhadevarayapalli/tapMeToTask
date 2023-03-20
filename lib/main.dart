@@ -17,28 +17,21 @@ DatabaseReference ref = FirebaseDatabase.instance.ref();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Code',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'TapMe'),
     );
   }
 }
+
+List<Widget> receivedtextfields = [];
+List<Widget> sendtextfields = [];
+List<Widget> messagetextfields = [];
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({super.key, required this.title});
@@ -49,33 +42,91 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+    readData();
+    super.initState();
+  }
+
+  TextEditingController message = TextEditingController();
+
+  readData() async {
+    Stream<DatabaseEvent> stream = ref.onValue;
+    stream.listen((DatabaseEvent event) {
+      print('Event Type: ${event.type}'); // DatabaseEventType.value;
+      print('Snapshot: ${event.snapshot.value}'); // DataSnapshot
+      setState(() {
+        messagetextfields.add(Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Text(event.snapshot.child("readmessage").value.toString()),
+          ),
+        ));
+      });
+    });
+    setState(() {
+      data = "";
+    });
+  }
 
   void sendData(String value) async {
-    await ref.set({
-      "message": value,
+    await ref.update({
+      "sendmessage": value,
     });
+    setState(() {
+      messagetextfields.add(Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Text(value),
+      ),
+    ));
+    });
+    message.clear();
+    const snackdemo = SnackBar(
+      content: Text('Sent'),
+      backgroundColor: Colors.green,
+      elevation: 10,
+      behavior: SnackBarBehavior.floating,
+      margin: EdgeInsets.all(5),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackdemo);
   }
 
   var data;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [IconButton(onPressed: (){
+          setState(() {
+            messagetextfields.clear();
+          });
+        }, icon: Icon(Icons.clear))],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Enter Message here:',
-            ),
-            Padding(
+      body: Column(
+        // mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
               padding: const EdgeInsets.all(15),
               child: TextField(
+                controller: message,
                 obscureText: false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        sendData(data);
+                      },
+                      icon: const Icon(
+                        Icons.send,
+                        color: Colors.black,
+                      )),
                   labelText: 'Message',
                   hintText: 'Enter Message',
                 ),
@@ -86,15 +137,27 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             ),
-            Padding(  
-                  padding: const EdgeInsets.all(15),  
-                  child: TextButton(child: Text("Send"),onPressed: (){
-                    sendData(data);
-                  },),  
-                ),
-          ],
-        ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+          ),
+          // Expanded(
+          //     child: ListView.builder(
+          //         itemCount: receivedtextfields.length,
+          //         itemBuilder: (BuildContext context, int index) {
+          //           return Padding(
+          //             padding: const EdgeInsets.all(8.0),
+          //             child: Align(
+          //               alignment: Alignment.topRight,
+          //               child: receivedtextfields[index],
+          //             ),
+          //           );
+          //         })),
+          Expanded(
+              child: ListView.builder(
+                  itemCount: messagetextfields.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return messagetextfields[index];
+                  }))
+        ],
+      ),
     );
   }
 }
