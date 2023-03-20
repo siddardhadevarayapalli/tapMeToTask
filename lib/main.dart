@@ -55,15 +55,21 @@ class _MyHomePageState extends State<MyHomePage> {
     stream.listen((DatabaseEvent event) {
       print('Event Type: ${event.type}'); // DatabaseEventType.value;
       print('Snapshot: ${event.snapshot.value}'); // DataSnapshot
-      setState(() {
-        messagetextfields.add(Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Align(
-            alignment: Alignment.topRight,
-            child: Text(event.snapshot.child("readmessage").value.toString()),
-          ),
-        ));
-      });
+      if (event.snapshot.child("readmessage").value != "") {
+        setState(() {
+          messagetextfields.add(Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Align(
+              alignment: Alignment.topRight,
+              child:
+                  Text("Their :${event.snapshot.child("readmessage").value}"),
+            ),
+          ));
+        });
+        ref.update({
+          "readmessage": "",
+        });
+      }
     });
     setState(() {
       data = "";
@@ -74,14 +80,15 @@ class _MyHomePageState extends State<MyHomePage> {
     await ref.update({
       "sendmessage": value,
     });
+
     setState(() {
       messagetextfields.add(Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: Text(value),
-      ),
-    ));
+        padding: const EdgeInsets.all(8.0),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: Text("me : $value"),
+        ),
+      ));
     });
     message.clear();
     const snackdemo = SnackBar(
@@ -101,11 +108,15 @@ class _MyHomePageState extends State<MyHomePage> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(widget.title),
-        actions: [IconButton(onPressed: (){
-          setState(() {
-            messagetextfields.clear();
-          });
-        }, icon: Icon(Icons.clear))],
+        actions: [
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  messagetextfields.clear();
+                });
+              },
+              icon: Icon(Icons.clear))
+        ],
       ),
       body: Column(
         // mainAxisAlignment: MainAxisAlignment.center,
