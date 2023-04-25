@@ -10,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 
+import 'hardware/toLCDscreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ void main() async {
   await setupFlutterNotifications();
   runApp(const MyApp());
 }
+
 late AndroidNotificationChannel channel;
 
 bool isFlutterLocalNotificationsInitialized = false;
@@ -77,7 +79,6 @@ class MyApp extends StatelessWidget {
 
 List<Widget> receivedtextfields = [];
 List<Widget> sendtextfields = [];
-List<Widget> messagetextfields = [];
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({super.key, required this.title});
@@ -90,23 +91,23 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    readData();
     getDeviceTokenToSendNotification();
     firebaseInit();
     super.initState();
   }
+
   String? _token;
   String? initialMessage;
   bool _resolved = false;
-  firebaseInit(){
-        FirebaseMessaging.instance.getInitialMessage().then(
-          (value) => setState(
-            () {
-              _resolved = true;
-              initialMessage = value?.data.toString();
-            },
-          ),
-        );
+  firebaseInit() {
+    // FirebaseMessaging.instance.getInitialMessage().then(
+    //       (value) => setState(
+    //         () {
+    //           _resolved = true;
+    //           initialMessage = value?.data.toString();
+    //         },
+    //       ),
+    //     );
 
     FirebaseMessaging.onMessage.listen(showFlutterNotification);
 
@@ -139,22 +140,23 @@ class _MyHomePageState extends State<MyHomePage> {
       print(e);
     }
   }
+
   int _messageCount = 0;
 
   String constructFCMPayload(String? token) {
-  _messageCount++;
-  return jsonEncode({
-    'token': token,
-    'data': {
-      'via': 'FlutterFire Cloud Messaging!!!',
-      'count': _messageCount.toString(),
-    },
-    'notification': {
-      'title': 'Hello FlutterFire!',
-      'body': 'This notification (#$_messageCount) was created via FCM!',
-    },
-  });
-}
+    _messageCount++;
+    return jsonEncode({
+      'token': token,
+      'data': {
+        'via': 'FlutterFire Cloud Messaging!!!',
+        'count': _messageCount.toString(),
+      },
+      'notification': {
+        'title': 'Hello FlutterFire!',
+        'body': 'This notification (#$_messageCount) was created via FCM!',
+      },
+    });
+  }
 
   Future<void> onActionSelected(String value) async {
     switch (value) {
@@ -185,27 +187,28 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
     }
   }
+
   void showFlutterNotification(RemoteMessage message) {
-  RemoteNotification? notification = message.notification;
-  AndroidNotification? android = message.notification?.android;
-  if (notification != null && android != null && !kIsWeb) {
-    flutterLocalNotificationsPlugin.show(
-      notification.hashCode,
-      notification.title,
-      notification.body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channelDescription: channel.description,
-          // TODO add a proper drawable resource to android, for now using
-          //      one that already exists in example app.
-          icon: 'launch_background',
+    RemoteNotification? notification = message.notification;
+    AndroidNotification? android = message.notification?.android;
+    if (notification != null && android != null && !kIsWeb) {
+      flutterLocalNotificationsPlugin.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            channel.id,
+            channel.name,
+            channelDescription: channel.description,
+            // TODO add a proper drawable resource to android, for now using
+            //      one that already exists in example app.
+            icon: 'launch_background',
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
-}
 
   Future<void> getDeviceTokenToSendNotification() async {
     final FirebaseMessaging _fcm = FirebaseMessaging.instance;
@@ -224,135 +227,52 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  TextEditingController message = TextEditingController();
-
-  readData() async {
-    Stream<DatabaseEvent> stream = ref.onValue;
-    stream.listen((DatabaseEvent event) {
-      var d = const Duration(seconds: 2);
-      Future.delayed(d, () {
-        print('Event Type: ${event.type}');
-        print('Snapshot: ${event.snapshot.value}');
-        if (event.snapshot.child("sendmessage").value != "") {
-          setState(() {
-            messagetextfields.add(Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Align(
-                alignment: Alignment.topRight,
-                child:
-                    Text("Their :${event.snapshot.child("sendmessage").value}"),
-              ),
-            ));
-          });
-          ref.update({
-            "sendmessage": "",
-          });
-        }
-      });
-      setState(() {
-        data = "";
-      });
-    });
-  }
-
-  void sendData(String value) async {
-    await ref.update({
-      "readmessage": value,
-    });
-    await ref.update({
-      "readmessage": "",
-    });
-
+  final pages = [
+    const ToLCD(),
+    const ToLCD(),
+    const ToLCD(),
+    const ToLCD(),
+  ];
+  var currentIndex = 0;
+  changeIndex(int index) {
     setState(() {
-      messagetextfields.add(Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Align(
-          alignment: Alignment.topLeft,
-          child: Text("me : $value"),
-        ),
-      ));
+      pages[index];
+      currentIndex = index;
     });
-    message.clear();
-    const snackdemo = SnackBar(
-      content: Text('Sent'),
-      backgroundColor: Colors.green,
-      elevation: 10,
-      behavior: SnackBarBehavior.floating,
-      margin: EdgeInsets.all(5),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackdemo);
   }
 
-  var data;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(widget.title),
-        actions: [
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  messagetextfields.clear();
-                });
-              },
-              icon: Icon(Icons.clear))
-        ],
       ),
-      body: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: Text("Your token $deviceTokenToSendPushNotification"),
-          // ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: TextField(
-                controller: message,
-                obscureText: false,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                      onPressed: () {
-                        sendData(data);
-                      },
-                      icon: const Icon(
-                        Icons.send,
-                        color: Colors.black,
-                      )),
-                  labelText: 'Message',
-                  hintText: 'Enter Message',
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    data = value;
-                  });
-                },
-              ),
-            ),
+      body: pages[currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.blue[700],
+        selectedFontSize: 13,
+        onTap: (value) => changeIndex(value),
+        unselectedFontSize: 13,
+        iconSize: 30,
+        items: const [
+          BottomNavigationBarItem(
+            label: "Home",
+            icon: Icon(Icons.home),
           ),
-          // Expanded(
-          //     child: ListView.builder(
-          //         itemCount: receivedtextfields.length,
-          //         itemBuilder: (BuildContext context, int index) {
-          //           return Padding(
-          //             padding: const EdgeInsets.all(8.0),
-          //             child: Align(
-          //               alignment: Alignment.topRight,
-          //               child: receivedtextfields[index],
-          //             ),
-          //           );
-          //         })),
-          Expanded(
-              child: ListView.builder(
-                  itemCount: messagetextfields.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return messagetextfields[index];
-                  }))
+          BottomNavigationBarItem(
+            label: "Search",
+            icon: Icon(Icons.search),
+          ),
+          BottomNavigationBarItem(
+            label: "Categories",
+            icon: Icon(Icons.grid_view),
+          ),
+          BottomNavigationBarItem(
+            label: "My Account",
+            icon: Icon(Icons.account_circle_outlined),
+          ),
         ],
       ),
     );
