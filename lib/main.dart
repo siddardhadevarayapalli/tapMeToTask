@@ -4,6 +4,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:tapmetoremember/constants.dart';
+import 'package:tapmetoremember/software/chat/chat.dart';
+import 'package:tapmetoremember/software/notifications/notifications.dart';
 import 'firebase_options.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -68,6 +71,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Code',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -228,9 +232,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   final pages = [
-    const ToLCD(),
-    const ToLCD(),
-    const ToLCD(),
+    const Chat(),
+    const Notifications(),
     const ToLCD(),
   ];
   var currentIndex = 0;
@@ -250,28 +253,21 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: pages[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor:currentIndex==0?AppConstants().blue:AppConstants().grey,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue[700],
-        selectedFontSize: 13,
         onTap: (value) => changeIndex(value),
-        unselectedFontSize: 13,
-        iconSize: 30,
-        items: const [
+        items:  [
           BottomNavigationBarItem(
             label: "Home",
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.chat,color: currentIndex==0?AppConstants().blue:AppConstants().grey,),
           ),
           BottomNavigationBarItem(
-            label: "Search",
-            icon: Icon(Icons.search),
+            label: "Notifications",
+            icon: Icon(Icons.notification_important_outlined,color: currentIndex==1?AppConstants().blue:AppConstants().grey,),
           ),
           BottomNavigationBarItem(
-            label: "Categories",
-            icon: Icon(Icons.grid_view),
-          ),
-          BottomNavigationBarItem(
-            label: "My Account",
-            icon: Icon(Icons.account_circle_outlined),
+            label: "Live",
+            icon: Icon(Icons.screenshot_monitor_outlined,color: currentIndex==2?AppConstants().blue:AppConstants().grey,),
           ),
         ],
       ),
