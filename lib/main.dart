@@ -14,6 +14,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 
 import 'hardware/toLCDscreen.dart';
+import 'login/login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -76,7 +77,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'TapMe'),
+      home: const LoginPage(),
     );
   }
 }
@@ -246,30 +247,52 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: pages[currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor:currentIndex==0?AppConstants().blue:AppConstants().grey,
-        type: BottomNavigationBarType.fixed,
-        onTap: (value) => changeIndex(value),
-        items:  [
-          BottomNavigationBarItem(
-            label: "Home",
-            icon: Icon(Icons.chat,color: currentIndex==0?AppConstants().blue:AppConstants().grey,),
-          ),
-          BottomNavigationBarItem(
-            label: "Notifications",
-            icon: Icon(Icons.notification_important_outlined,color: currentIndex==1?AppConstants().blue:AppConstants().grey,),
-          ),
-          BottomNavigationBarItem(
-            label: "Live",
-            icon: Icon(Icons.screenshot_monitor_outlined,color: currentIndex==2?AppConstants().blue:AppConstants().grey,),
-          ),
-        ],
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          leading: const Icon(Icons.connect_without_contact_rounded),
+          title: Text(widget.title),
+        ),
+        body: pages[currentIndex],
+        bottomNavigationBar: BottomNavigationBar(
+          selectedItemColor:
+              currentIndex == 0 ? AppConstants().blue : AppConstants().grey,
+          type: BottomNavigationBarType.fixed,
+          onTap: (value) => changeIndex(value),
+          items: [
+            BottomNavigationBarItem(
+              label: "Home",
+              icon: Icon(
+                Icons.chat,
+                color: currentIndex == 0
+                    ? AppConstants().blue
+                    : AppConstants().grey,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: "Notifications",
+              icon: Icon(
+                Icons.notification_important_outlined,
+                color: currentIndex == 1
+                    ? AppConstants().blue
+                    : AppConstants().grey,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: "Live",
+              icon: Icon(
+                Icons.screenshot_monitor_outlined,
+                color: currentIndex == 2
+                    ? AppConstants().blue
+                    : AppConstants().grey,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
