@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
+import '../constants.dart';
 import '../main.dart';
 
 class ToLCD extends StatefulWidget {
@@ -11,7 +12,6 @@ class ToLCD extends StatefulWidget {
 }
 
 class _ToLCDState extends State<ToLCD> {
-  
   @override
   @override
   var data;
@@ -22,9 +22,10 @@ class _ToLCDState extends State<ToLCD> {
     readData();
     super.initState();
   }
+
   void sendData(String value) async {
     await ref.update({
-      "lcdmale": value,
+      lcdDisplay: value,
     });
     setState(() {
       //sent PopUp Message
@@ -38,13 +39,14 @@ class _ToLCDState extends State<ToLCD> {
       ScaffoldMessenger.of(context).showSnackBar(snackdemo);
     });
   }
+
   var isLoading = false;
   void clearLcdData() async {
     setState(() {
       isLoading = true;
     });
     await ref.update({
-      "lcdmale": "",
+      lcdDisplay: "",
     });
     setState(() {
       //sent PopUp Message
@@ -63,24 +65,23 @@ class _ToLCDState extends State<ToLCD> {
       isLoading = false;
     });
   }
-    readData() async {
+
+  readData() async {
     Stream<DatabaseEvent> stream = ref.onValue;
     stream.listen((DatabaseEvent event) {
-
-        print('Event Type: ${event.type}');
-        print('Snapshot: ${event.snapshot.value}');
-        if (event.snapshot.child("lcdmale").value != "") {
-          setState(() {
-            message.text = event.snapshot.child("lcdmale").value.toString();
-            messageData = event.snapshot.child("lcdmale").value.toString();
-          });
-        }
-      });
-      setState(() {
-        data = "";
-      });
+      print('Event Type: ${event.type}');
+      print('Snapshot: ${event.snapshot.value}');
+      if (event.snapshot.child(lcdDisplay).value != "") {
+        setState(() {
+          message.text = event.snapshot.child(lcdDisplay).value.toString();
+          messageData = event.snapshot.child(lcdDisplay).value.toString();
+        });
+      }
+    });
+    setState(() {
+      data = "";
+    });
   }
-
 
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -127,17 +128,20 @@ class _ToLCDState extends State<ToLCD> {
                 height: size.width,
               ),
               Text(messageData),
-              messageData!=""?Padding(
-                padding: EdgeInsets.only(right:size.width/10,bottom: size.width/2.5),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                      onPressed: () {
-                        clearLcdData();
-                      },
-                      icon: const Icon(Icons.clear_rounded)),
-                ),
-              ):const SizedBox()
+              messageData != ""
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                          right: size.width / 10, bottom: size.width / 2.5),
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(
+                            onPressed: () {
+                              clearLcdData();
+                            },
+                            icon: const Icon(Icons.clear_rounded)),
+                      ),
+                    )
+                  : const SizedBox()
             ],
           ),
         ],
