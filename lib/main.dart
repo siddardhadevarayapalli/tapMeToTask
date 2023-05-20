@@ -4,9 +4,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:tapmetoremember/constants.dart';
 import 'package:tapmetoremember/software/chat/chat.dart';
 import 'package:tapmetoremember/software/notifications/notifications.dart';
+import 'package:tapmetoremember/software/profile/profile.dart';
+import 'package:tapmetoremember/software/splash.dart';
+import 'package:tapmetoremember/widgets/widgets.dart';
 import 'firebase_options.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -18,11 +22,26 @@ import 'login/login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  HomeWidget.registerBackgroundCallback(backgroundCallback);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await setupFlutterNotifications();
   runApp(const MyApp());
+}
+
+Future<void> backgroundCallback(Uri? uri) async {
+  if (uri!.host == 'updatecounter') {
+    int? _counter;
+    await HomeWidget.getWidgetData<int>('_counter', defaultValue: 0)
+        .then((value) {
+      _counter = value!;
+      _counter = _counter! + 1;
+    });
+    await HomeWidget.saveWidgetData<int>('_counter', _counter);
+    await HomeWidget.updateWidget(
+        name: 'AppWidgetProvider', iOSName: 'AppWidgetProvider');
+  }
 }
 
 late AndroidNotificationChannel channel;
@@ -77,7 +96,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
+      home: const SplashScreen(),
     );
   }
 }
@@ -253,9 +272,22 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
+        drawer: const DrawerMenu(),
         appBar: AppBar(
-          leading: const Icon(Icons.connect_without_contact_rounded),
+          // leading: const Icon(Icons.connect_without_contact_rounded),
+
           title: Text(widget.title),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ProfileScreen()),
+                  );
+                },
+                icon: const Icon(Icons.person))
+          ],
         ),
         body: pages[currentIndex],
         bottomNavigationBar: BottomNavigationBar(
