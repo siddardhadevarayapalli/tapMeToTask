@@ -93,10 +93,17 @@ packages:
     dependency: transitive
     description:
       name: crypto
+<<<<<<< HEAD
       sha256: ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+=======
+      sha256: aa274aa7774f8964e4f4f38cc994db7b6158dd36e9187aaceaddc994b35c6c67
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
+>>>>>>> 685c81566589ec38b34d3ba21ef6d416e1d2ca19
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -300,10 +307,17 @@ packages:
     dependency: "direct main"
     description:
       name: home_widget
+<<<<<<< HEAD
       sha256: "2ef64c73c7cf3b7cbfdf8233a0a46055a66d6289de58ae40912f9801f9282d79"
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1"
+=======
+      sha256: c7a57566606ce702454f074a0b933ee156f05ea6ef1f79f4cb680a171afe59dd
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0+1"
+>>>>>>> 685c81566589ec38b34d3ba21ef6d416e1d2ca19
   http:
     dependency: "direct main"
     description:
