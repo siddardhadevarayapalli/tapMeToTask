@@ -1,8 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tapmetoremember/apicalls/apicalls.dart';
 
 import '../../constants.dart';
+import '../../controllers/chatController.dart';
 import '../../main.dart';
 
 class Chat extends StatefulWidget {
@@ -19,9 +21,12 @@ class _ChatState extends State<Chat> {
     super.initState();
   }
 
+  final ChatController controller = !Get.isRegistered<ChatController>()
+      ? Get.put(ChatController())
+      : Get.find<ChatController>();
   @override
   var data;
-  List<Widget> messagetextfields = [];
+
   TextEditingController message = TextEditingController();
   readData() async {
     Stream<DatabaseEvent> stream = ref.onValue;
@@ -30,7 +35,7 @@ class _ChatState extends State<Chat> {
       print('Snapshot: ${event.snapshot.value}');
       if (event.snapshot.child(readSms).value != "") {
         setState(() {
-          messagetextfields.add(Padding(
+          controller.messagetextfields.add(Padding(
             padding: const EdgeInsets.all(8.0),
             child: Align(
               alignment: Alignment.topRight,
@@ -50,8 +55,7 @@ class _ChatState extends State<Chat> {
 
   void sendFcmNotification(String message) async {
     var data = {
-      "to":
-          fcmTokenGot,
+      "to": fcmTokenGot,
       "notification": {
         "title": name,
         "body": message,
@@ -65,8 +69,7 @@ class _ChatState extends State<Chat> {
     };
     var headers = {
       "Content-Type": "application/json",
-      "Authorization":
-          "key=$serverKey"
+      "Authorization": "key=$serverKey"
     };
     ApiServices().post(data, "https://fcm.googleapis.com/fcm/send", headers);
   }
@@ -80,7 +83,7 @@ class _ChatState extends State<Chat> {
     });
 
     setState(() {
-      messagetextfields.add(Padding(
+      controller.messagetextfields.add(Padding(
         padding: const EdgeInsets.all(8.0),
         child: Align(
           alignment: Alignment.topLeft,
@@ -150,9 +153,9 @@ class _ChatState extends State<Chat> {
         //         })),
         Expanded(
             child: ListView.builder(
-                itemCount: messagetextfields.length,
+                itemCount: controller.messagetextfields.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return messagetextfields[index];
+                  return controller.messagetextfields[index];
                 }))
       ],
     );
