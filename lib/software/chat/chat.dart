@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:tapmetoremember/apicalls/apicalls.dart';
 
 import '../../constants.dart';
 import '../../main.dart';
@@ -47,7 +48,30 @@ class _ChatState extends State<Chat> {
     });
   }
 
-  void sendData(String value) async {
+  void sendFcmNotification(String message) async {
+    var data = {
+      "to":
+          fcmTokenGot,
+      "notification": {
+        "title": name,
+        "body": message,
+        "mutable_content": true,
+        "sound": "Tri-tone"
+      },
+      "data": {
+        "url": "https://wallpapercave.com/wp/wp11330816.jpg",
+        "dl": "<deeplink action on tap of notification>"
+      }
+    };
+    var headers = {
+      "Content-Type": "application/json",
+      "Authorization":
+          "key=$serverKey"
+    };
+    ApiServices().post(data, "https://fcm.googleapis.com/fcm/send", headers);
+  }
+
+  void sendMessage(String value) async {
     await ref.update({
       sendSms: value,
     });
@@ -94,7 +118,8 @@ class _ChatState extends State<Chat> {
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
                     onPressed: () {
-                      sendData(data);
+                      sendMessage(data);
+                      sendFcmNotification(data);
                     },
                     icon: const Icon(
                       Icons.send,

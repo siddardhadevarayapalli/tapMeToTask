@@ -116,6 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     getDeviceTokenToSendNotification();
+    readFcmTokenData();
     firebaseInit();
     super.initState();
   }
@@ -247,7 +248,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   sendTokenValue() async {
     await ref.update({
-      "app1Token": deviceTokenToSendPushNotification,
+      fcmtoken: deviceTokenToSendPushNotification,
+    });
+  }
+  readFcmTokenData()async{
+    Stream<DatabaseEvent> stream = ref.onValue;
+    stream.listen((DatabaseEvent event) {
+      print('Event Type: ${event.type}');
+      print('Snapshot: ${event.snapshot.value}');
+      if (event.snapshot.child(readfcmtoken).value != "") {
+        setState(() {
+          debugPrint("${event.snapshot.child(readfcmtoken).value}");
+          fcmTokenGot = event.snapshot.child(readfcmtoken).value.toString();
+        });
+      }
     });
   }
 

@@ -87,7 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     });
                     try {
                       // ignore: unrelated_type_equality_checks
-                      if (loginController.confirmpasswordController ==
+                      if (loginController.confirmpasswordController.text ==
                           loginController.passwordController.text) {
                         final newUser =
                             await _auth.createUserWithEmailAndPassword(
