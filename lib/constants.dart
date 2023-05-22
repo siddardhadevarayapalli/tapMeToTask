@@ -22,7 +22,6 @@ String serverKey =
 // String readfcmtoken = "fcmMale";
 // String name = "BuBu";
 
-
 //dudu
 
 String sendSms = "messageSendMale";
