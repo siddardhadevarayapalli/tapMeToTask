@@ -15,19 +15,19 @@ String serverKey =
 
 // bubu
 
-String sendSms = "messageSendFeMale";
-String readSms = "messageSendMale";
-String lcdDisplay = "lcdFeMale";
-String fcmtoken = "fcmFeMale";
-String readfcmtoken = "fcmMale";
-String name = "BuBu";
+// String sendSms = "messageSendFeMale";
+// String readSms = "messageSendMale";
+// String lcdDisplay = "lcdFeMale";
+// String fcmtoken = "fcmFeMale";
+// String readfcmtoken = "fcmMale";
+// String name = "BuBu";
 
 
 //dudu
 
-// String sendSms = "messageSendMale";
-// String readSms = "messageSendFeMale";
-// String lcdDisplay = "lcdMale";
-// String name = "DuDu";
-// String fcmtoken = "fcmMale";
-// String readfcmtoken = "fcmFeMale";
+String sendSms = "messageSendMale";
+String readSms = "messageSendFeMale";
+String lcdDisplay = "lcdMale";
+String name = "DuDu";
+String fcmtoken = "fcmMale";
+String readfcmtoken = "fcmFeMale";
